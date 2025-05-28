@@ -21,10 +21,14 @@ class DataLoader:
         if path:
             return pd.read_csv(path)
         else:
-            # ローカルのファイル
-            local_path = "/Users/saitoissei/Documents/GitHub/lecture-ai-engineering/day5/演習2/data/Titanic.csv"
-            if os.path.exists(local_path):
-                return pd.read_csv(local_path)
+            # main.py から見て ./data/Titanic.csv
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            default_path = os.path.join(current_dir, "data", "Titanic.csv")
+            print(f"📄 ロードしようとしているCSVパス: {default_path}")
+            if os.path.exists(default_path):
+                return pd.read_csv(default_path)
+            else:
+                raise FileNotFoundError(f"Titanic.csv が見つかりません: {default_path}")
 
     @staticmethod
     def preprocess_titanic_data(data):
