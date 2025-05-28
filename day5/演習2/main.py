@@ -11,6 +11,7 @@ import pickle
 import time
 import great_expectations as gx
 
+
 class DataLoader:
     """データロードを行うクラス"""
 
@@ -285,13 +286,17 @@ if __name__ == "__main__":
     # ベースラインとの比較
     baseline_ok = ModelTester.compare_with_baseline(metrics)
     print(f"ベースライン比較: {'合格' if baseline_ok else '不合格'}")
+
+
 def test_model_against_previous_version():
     """
     現在のモデルと過去モデルを比較し、性能劣化がないかをチェックするテスト
     """
     data = DataLoader.load_titanic_data()
     X, y = DataLoader.preprocess_titanic_data(data)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     # 現在のモデル学習と評価
     current_model = ModelTester.train_model(X_train, y_train)
@@ -302,10 +307,12 @@ def test_model_against_previous_version():
         previous_model = ModelTester.load_model()
         previous_metrics = ModelTester.evaluate_model(previous_model, X_test, y_test)
 
-        assert current_metrics["accuracy"] >= previous_metrics["accuracy"], \
-            f"現在のモデルの精度({current_metrics['accuracy']:.3f})が過去モデル({previous_metrics['accuracy']:.3f})を下回っています"
+        assert (
+            current_metrics["accuracy"] >= previous_metrics["accuracy"]
+        ), f"現在のモデルの精度({current_metrics['accuracy']:.3f})が過去モデル({previous_metrics['accuracy']:.3f})を下回っています"
 
-        print(f"[比較結果] 現モデル: {current_metrics['accuracy']:.3f}, 過去モデル: {previous_metrics['accuracy']:.3f}")
+        print(
+            f"[比較結果] 現モデル: {current_metrics['accuracy']:.3f}, 過去モデル: {previous_metrics['accuracy']:.3f}"
+        )
     except FileNotFoundError:
         print("過去モデルが存在しません。初回実行と見なしてスキップします。")
-
